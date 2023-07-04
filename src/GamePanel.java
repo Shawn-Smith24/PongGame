@@ -30,7 +30,8 @@ public class GamePanel extends JPanel implements Runnable{
         gameThread.start();
     }
     public void newBall(){
-
+//        random = new Random();
+        ball = new Ball((GAME_WIDTH/2)-(BALL_DIAMTER/2), (GAME_HEIGHT/2)-(BALL_DIAMTER/2),BALL_DIAMTER, BALL_DIAMTER);
     }
     public void newPaddles(){
         paddle1 = new Paddle(0,(GAME_HEIGHT/2)-(PADDLE_HEIGHT/2), PADDLE_WIDTH, PADDLE_HEIGHT,1);
@@ -49,11 +50,13 @@ public class GamePanel extends JPanel implements Runnable{
     public void draw(Graphics g){
       paddle1.draw(g);
       paddle2.draw(g);
-
+      ball.draw(g);
     }
 
     public void move(){
-
+        paddle1.move();
+        paddle2.move();
+        ball.move();
     }
     public void checkCollision(){
         // stops the paddles at window edges
@@ -66,6 +69,34 @@ public class GamePanel extends JPanel implements Runnable{
         if (paddle2.y>=(GAME_HEIGHT-PADDLE_HEIGHT))
             paddle2.y = GAME_HEIGHT-PADDLE_HEIGHT;
 
+        // causes ball to bounce off window edges
+        if(ball.y <= 0){
+            ball.setYDirection(-ball.yVelocity);
+        }
+        if (ball.y >= GAME_HEIGHT-BALL_DIAMTER){
+            ball.setYDirection(-ball.yVelocity);
+        }
+        //bounces ball off the paddle
+        if (ball.intersects(paddle1)){
+            ball.xVelocity = Math.abs(ball.xVelocity);
+            ball.xVelocity++;
+            if (ball.yVelocity>0)
+                ball.yVelocity++;
+            else
+                ball.yVelocity--;
+            ball.setXDirection(ball.xVelocity);
+            ball.setYDirection(ball.yVelocity);
+        }
+        if (ball.intersects(paddle2)){
+            ball.xVelocity = Math.abs(ball.xVelocity);
+            ball.xVelocity++;
+            if (ball.yVelocity>0)
+                ball.yVelocity++;
+            else
+                ball.yVelocity--;
+            ball.setXDirection(-ball.xVelocity);
+            ball.setYDirection(ball.yVelocity);
+        }
 
     }
     public void run(){
